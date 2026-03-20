@@ -132,4 +132,33 @@ async function loadAllRequests() {
  * @param {string} reqId String com identificação Hexadecimal da solicitação.
  * @param {string} newStatus Valores explícitos validados da DB constraint enum type.
  */
+async function updateStatus(reqId) {
+    try {
+        const newStatus = document.getElementById(`educator-status-${reqId}`).value;
+        const commentField = document.getElementById(`educator-comment-${reqId}`);
+        const educatorComment = commentField ? commentField.value : '';
+
+        const { error: reqError } = await supabase.from('requests').update({ status: newStatus }).eq('id', reqId);
+        if (reqError) {
+            alert("Erro de I/O na Nuvem: " + reqError.message);
+            return;
+        }
+
+        const educatorName = (currentUser.user_metadata && currentUser.user_metadata.name) ? currentUser.user_metadata.name : 'Coordenação Oficial';
+        const { error: histError } = await supabase.from('request_history').insert([{
+            request_id: reqId,
+            actor_name: educatorName,
+            action: `Parecer Emitido e Status Alterado para: ${newStatus}`,
+            comment: educatorComment
+        }]);
+
+        if (histError) console.error("Falha Histórico: ", histError);
+
+        alert("O Laudo e Comentário Oficial foram anexados à Solicitação com sucesso!");
+        loadAllRequests();
+    } catch(err) {
+        alert("Falha Interna no JS do Educador: " + err.message);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', init);
