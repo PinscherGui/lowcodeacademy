@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Low Academy | Portal Interativo</title>
+    <!-- Web Performance Skill: Preconnects para diminuir Latência TCP/TLS -->
+    <link rel="preconnect" href="https://wmgsdgtqbssjbgmmcomr.supabase.co" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="css/style.css">
+    <script type="module">
+        import { checkSession, getUserProfile } from './js/supabaseClient.js';
+        
+        // Auto-redirect if already logged in
+        document.addEventListener('DOMContentLoaded', async () => {
+            const session = await checkSession();
+            if (session) {
+                const profile = await getUserProfile(session.user.id);
+                if (profile) {
+                    if (profile.role === 'student') window.location.href = 'dashboard_student.html';
+                    else if (profile.role === 'educator') window.location.href = 'dashboard_educator.html';
+                }
+            }
+        });
+    </script>
+</head>
+<body class="d-flex align-center justify-center">
+
+    <div class="glass-panel text-center animate-fade-in" style="max-width: 500px; padding: 4rem 2rem;">
+        <div class="logo justify-center mb-4" style="font-size: 2.5rem;">
+            ⚡ Low <span>Academy</span>
+        </div>
+        <p class="mb-4 text-muted" style="line-height: 1.6;">
+            Bem-vindo ao portal interativo. Acesse sua conta como <strong style="color:white">Estudante</strong> para criar e acompanhar solicitações ou como <strong style="color:white">Educador</strong> para gerenciar os pedidos.
+        </p>
+        
+        <div class="d-flex flex-column gap-2 mt-4">
+            <a href="login.html" class="btn btn-primary">Acessar o Portal</a>
+            <a href="https://supabase.com" target="_blank" class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem">
+                Powered by Supabase
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

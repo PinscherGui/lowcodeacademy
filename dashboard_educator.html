@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Educador | Low Academy</title>
+    <link rel="preconnect" href="https://wmgsdgtqbssjbgmmcomr.supabase.co" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container d-flex justify-between align-center" style="padding: 0;">
+            <div class="logo">⚡ Low <span>Academy</span></div>
+            <div class="d-flex align-center gap-2">
+                <span id="user-name" style="font-size: 0.95rem;">Carregando...</span>
+                <span class="status-badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.4);">Educador</span>
+                <button id="btn-logout" class="btn btn-outline" style="padding: 0.5rem 1rem; width: auto;">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-4 animate-fade-in">
+        <div class="glass-panel">
+            <div class="d-flex justify-between align-center mb-4">
+                <h2>📋 Gestão de Solicitações</h2>
+                <button class="btn btn-outline" style="width: auto; padding: 0.5rem 1rem;" onclick="loadAllRequests()">Atualizar</button>
+            </div>
+            
+            <p class="text-muted mb-4">Visualize e atualize o status dos pedidos enviados pelos alunos.</p>
+            
+            <div id="all-req-list" class="request-list">
+                <p>Carregando dados da coordenação...</p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/educator.js"></script>
+
+</body>
+</html>

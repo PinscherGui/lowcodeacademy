@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Low Academy</title>
+    <link rel="preconnect" href="https://wmgsdgtqbssjbgmmcomr.supabase.co" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="d-flex align-center justify-center">
+
+    <div class="glass-panel text-center animate-fade-in" style="width: 100%; max-width: 450px; padding: 3rem 2.5rem;">
+        <div class="logo justify-center mb-4">
+            ⚡ Low <span>Academy</span>
+        </div>
+        
+        <!-- Toggle Tabs -->
+        <div class="d-flex gap-2 mb-4" style="background: var(--input-bg); border-radius: 8px; padding: 0.25rem;">
+            <button id="tab-login" class="btn btn-primary" style="flex: 1;" onclick="switchTab('login')">Entrar</button>
+            <button id="tab-register" class="btn btn-outline" style="flex: 1; border: none;" onclick="switchTab('register')">Criar Conta</button>
+        </div>
+
+        <div id="alert-box" class="alert"></div>
+
+        <!-- Login Form -->
+        <form id="login-form">
+            <div class="form-group" style="text-align: left;">
+                <label for="login-email">E-mail</label>
+                <input type="email" id="login-email" placeholder="seu@email.com" required>
+            </div>
+            <div class="form-group" style="text-align: left;">
+                <label for="login-password">Senha</label>
+                <input type="password" id="login-password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2" id="btn-login">
+                Acessar Portal
+            </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" style="display: none;">
+            <div class="form-group" style="text-align: left;">
+                <label for="reg-name">Nome Completo</label>
+                <input type="text" id="reg-name" placeholder="John Doe" required>
+            </div>
+            <div class="form-group" style="text-align: left;">
+                <label for="reg-email">E-mail</label>
+                <input type="email" id="reg-email" placeholder="seu@email.com" required>
+            </div>
+            <div class="form-group" style="text-align: left;">
+                <label for="reg-password">Senha (mínimo 6 chars)</label>
+                <input type="password" id="reg-password" placeholder="••••••••" required minlength="6">
+            </div>
+            <div class="form-group" style="text-align: left;">
+                <label for="reg-role">Seu Perfil</label>
+                <select id="reg-role" required>
+                    <option value="student">Estudante</option>
+                    <option value="educator">Educador / Coordenador</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2" id="btn-register">
+                Cadastrar e Entrar
+            </button>
+        </form>
+
+        <p class="mt-4 text-muted" style="font-size: 0.85rem;">
+            <a href="index.html">← Voltar para o início</a>
+        </p>
+    </div>
+
+    <!-- UI Logic for Tabs -->
+    <script>
+        function switchTab(tab) {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+            const alertBox = document.getElementById('alert-box');
+            
+            alertBox.style.display = 'none';
+
+            if (tab === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                tabLogin.className = 'btn btn-primary';
+                tabLogin.style.border = 'none';
+                tabRegister.className = 'btn btn-outline';
+                tabRegister.style.border = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                tabRegister.className = 'btn btn-primary';
+                tabRegister.style.border = 'none';
+                tabLogin.className = 'btn btn-outline';
+                tabLogin.style.border = 'none';
+            }
+        }
+    </script>
+    
+    <!-- Auth API Logic -->
+    <script type="module" src="js/auth.js"></script>
+
+</body>
+</html>
