@@ -20,6 +20,8 @@ Uma plataforma web desenvolvida com **HTML, CSS e JavaScript (Vanilla)** e integ
    - Evitamos Injeções DOM-Based mal-intencionadas criadas por estudantes. A proteção é imposta centralmente (`utils.js`), isolando as entradas nativas convertendo em tags virtuais escapadas. 
 4. **Desempenho (Performance Tunneling):** 
    - Eliminados os gargalos e atrasos de servidor pelo uso estrito de HTML-Hacks (`<link rel="preconnect">`). Agiliza a comunicação paralela Web Socket com a infraestrutura no exterior antes de exibir o CSS à tela.
+5. **Helpdesk Corporativo (Arquitetura V3):** 
+   - O sistema comporta *Rastreabilidade Total (Audit Trail)*. As aberturas exigem *Categorias* afuniladas de contexto, e ambas as visualizações são dominadas por uma robusta Linha do Tempo (Apoiada em *CSS Psueudomarkers* e inner joins SQL à tabela `request_history`), detalhando e expondo comentários judiciais de Coordenação a nível cronometrado em segundos, garantindo a transparência vital no Atendimento.
 
 ---
 

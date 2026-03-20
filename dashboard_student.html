@@ -26,10 +26,21 @@
         <div class="glass-panel mb-4">
             <h2>📝 Nova Solicitação</h2>
             <p class="text-muted mb-4">Preencha os detalhes abaixo para enviar uma solicitação para a coordenação.</p>
-            
-            <form id="new-req-form">
+            <h2>Nova Solicitação Institucional</h2>
+            <form id="request-form">
                 <div class="form-group">
-                    <label for="req-title">Título do Pedido</label>
+                    <label>Categoria do Assunto</label>
+                    <select id="req-category" required style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: white; margin-bottom: 1rem;">
+                        <option value="" disabled selected>Escolha uma categoria...</option>
+                        <option value="Envio de Atividade Complementar">Envio de Atividade Complementar</option>
+                        <option value="Suporte Financeiro e de Bolsas">Suporte Financeiro e de Bolsas</option>
+                        <option value="Dúvidas Acadêmicas da Matriz">Dúvidas Acadêmicas da Matriz</option>
+                        <option value="Suporte de TI e Portal">Suporte de TI e Portal</option>
+                        <option value="Outros Assuntos Gerais">Outros Assuntos Gerais</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Título da sua Solicitação / Protocolo</label>
                     <input type="text" id="req-title" placeholder="Ex: Trancamento de Matrícula" required>
                 </div>
                 <div class="form-group">

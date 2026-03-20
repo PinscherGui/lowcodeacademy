@@ -40,6 +40,12 @@ Como parte do aprimoramento contínuo das tecnologias, integramos:
 - **Redução de Latência (Network Pre-connecting):** Injeção prioritária da norma de perfomance `<link rel="preconnect">`. O navegador do aluno adiantará agressivamente o "Handshake" DNS e TCP/TLS com o servidor remoto da Edge Network do Supabase, baixando a latência de primeira via (`TTFB` - Time to First Byte)
 - **Psicologia em UI (UX Skeleton Loader):** Utilização isolada das matrizes animadas fantasma `renderSkeletonLoader()` que seguram o design fixado via keyframes `@pulse` enquanto os nós e metadados estão sendo requisitados e retornados Assincronamente (Awaits) pro painel.
 
+### 🏢 Helpdesk Corporativo e Rastreabilidade (Sistema V3)
+Inspirado arquiteturalmente em portais universitários estritamente corporativos, a versão atual transparece:
+- **Bancos de Dados Relacionais Restritos (Tabela-Filha Histórica):** Foi erguida a tabela 1-para-Muitos `request_history`, encarregada de gravar perpetuamente a cadeia de tempo exata, salvando o nome do Ator processual, a Ação engatilhada e Pareceres (Comentários Oficiais em texto) sempre ligados transversalmente à Queixa Raiz. O aninhamento (Deep SQL Select) foi utilizado no client JS para puxar com alta resiliência toda a estrutura do Supabase no mesmo *Request*.
+- **Categorizações Determinísticas:** Listas rígidas pré-mapeadas foram instaladas (`<select>`), forçando o estudante a atribuir departamentos claros (TI, Documentação, Finanças) na nova coluna SQL de banco de dados `category`.
+- **Desenhador de Timeline CSS3 (Visualização de Rastreabilidade):** Construiu-se a ilusão óptica esférica vertical das *Linhas do Tempo* via cálculos milimétricos com Margin, Padding Absoluto e manipulação bruta de Pseudo-Elementos Globais DOM (`:.timeline-marker`), para ilustrar transparentemente as mensagens enviadas e instantes processuais ocorridos na página visualizadora.
+
 ## 🌐 Implantação e Hosting Público (Netlify CI/CD)
 Toda a plataforma foi hospedada de maneira elástica garantindo um fluxo ininterrupto de avaliações, ao conectar diretamente as versões de código limpo do repositório remoto (**GitHub**) com as hospedagens *Front-End* na infraestrutura moderna de ponta global do **Netlify**.
 

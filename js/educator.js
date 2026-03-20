@@ -44,8 +44,9 @@ async function loadAllRequests() {
     const { data: requests, error } = await supabase
         .from('requests')
         .select(`
-            id, title, description, status, created_at,
-            profiles(name)
+            id, title, description, status, category, created_at,
+            profiles(name),
+            request_history ( action, actor_name, comment, created_at )
         `)
         .order('created_at', { ascending: false });
         
@@ -55,7 +56,7 @@ async function loadAllRequests() {
         return; 
     }
     if (!requests || requests.length === 0) { 
-        list.innerHTML = '<p class="text-muted" style="text-align: center; padding: 2rem;">Sem solicitações correntes na mesa.</p>'; 
+        list.innerHTML = '<p class="text-muted" style="text-align: center; padding: 2rem;">Nenhuma solicitação aguardando laudo na mesa.</p>'; 
         return; 
     }
     
@@ -63,38 +64,61 @@ async function loadAllRequests() {
     
     // Desenha o Grid Card na tela principal
     requests.forEach(r => {
-        // Explode o Join JSON `profiles: { name: "Maria" }` previnindo nulabilidades falsas e vazios
+        // Explodes de relações JSON
         const studentName = escapeHTML((r.profiles && r.profiles.name) ? r.profiles.name : 'Aluno Desconhecido');
-        const dateStr = new Date(r.created_at).toLocaleDateString('pt-BR', { hour: '2-digit', minute:'2-digit' });
+        const badgeClass = r.status === 'Pendente' ? 'status-pendente' : (r.status === 'Em análise' ? 'status-analise' : 'status-concluida');
+        const safeCategory = escapeHTML(r.category || 'Não categorizado');
         
-        // Define o item focado do 'Select' baseado no atual espelho do Server State
+        // Rendering da Timeline Aninhada
+        let historyHtml = '';
+        if (r.request_history && r.request_history.length > 0) {
+            const sortedHistory = r.request_history.sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+            sortedHistory.forEach(h => {
+                const hTime = new Date(h.created_at).toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short'});
+                historyHtml += `
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <strong>${escapeHTML(h.action)}</strong>
+                        <p class="timeline-date">${hTime} - Por: <strong>${escapeHTML(h.actor_name)}</strong></p>
+                        ${h.comment ? `<div class="timeline-comment">${escapeHTML(h.comment)}</div>` : ''}
+                    </div>
+                </div>`;
+            });
+        }
+
         let pendingSelected = r.status === 'Pendente' ? 'selected' : '';
         let analiseSelected = r.status === 'Em análise' ? 'selected' : '';
         let concluidaSelected = r.status === 'Concluída' ? 'selected' : '';
 
-        // SECURITY SHIELD: Previne XSS Stored Injections. Crucial aqui, pois o educador 
-        // lê inputs gerados por outras pessoas.
         const safeTitle = escapeHTML(r.title);
-        const safeDesc = escapeHTML(r.description);
 
         list.innerHTML += `
-            <div class="request-card" style="flex-direction: column; gap: 1rem;">
-                <div class="d-flex justify-between align-center" style="width: 100%;">
+            <div class="request-card" style="flex-direction: column; gap: 0rem;">
+                <div class="d-flex justify-between align-center" style="width: 100%; border-bottom: 2px solid rgba(255,255,255,0.05); padding-bottom:1rem; margin-bottom: 0.5rem">
                     <div>
-                        <h3 style="margin-bottom: 0.25rem;">${safeTitle}</h3>
-                        <div class="text-muted" style="font-size: 0.85rem;">Feito por: <strong style="color:white">${studentName}</strong> • ${dateStr}</div>
+                        <h3 style="margin-bottom: 0.25rem;">${safeTitle} <span style="font-size:0.8rem; opacity:0.7">(${safeCategory})</span></h3>
+                        <div class="text-muted" style="font-size: 0.85rem;">Protocolado Inicialmente por: <strong style="color:white">${studentName}</strong></div>
                     </div>
-                    <div style="display:flex; gap: 0.5rem; align-items: center;">
-                        <span style="font-size: 0.85rem; color: var(--text-muted)">Modificar Tarefa:</span>
-                        <select onchange="updateStatus('${r.id}', this.value)" style="padding: 0.4rem; font-size: 0.9rem; margin: 0; min-width: 140px; background: rgba(0,0,0,0.5); cursor: pointer">
-                            <option value="Pendente" ${pendingSelected}>Pendente</option>
-                            <option value="Em análise" ${analiseSelected}>Em análise</option>
-                            <option value="Concluída" ${concluidaSelected}>Concluída</option>
-                        </select>
-                    </div>
+                    <span class="status-badge ${badgeClass}">${r.status}</span>
                 </div>
-                <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; width: 100%;">
-                    <p style="margin: 0; color: #cbd5e1;">${safeDesc}</p>
+                
+                <div class="timeline-container">
+                    ${historyHtml}
+                </div>
+                
+                <div class="educator-action-box" style="margin-top:1.5rem; padding-top:1rem; border-top: 1px dashed rgba(255,255,255,0.2);">
+                    <label style="font-size:0.85rem; color:var(--text-muted); font-weight:600">✍️ Emitir Laudo do Atendimento (Opcional):</label>
+                    <textarea id="educator-comment-${r.id}" rows="2" style="width:100%; padding:0.8rem; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid var(--glass-border); color:white; margin: 0.5rem 0;" placeholder="Redija sua mensagem ou adendo que acompanhará a sua alteração de sistema..."></textarea>
+                    
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
+                        <select id="educator-status-${r.id}" style="padding: 0.8rem; font-size: 0.95rem; margin: 0; min-width: 140px; background: rgba(0,0,0,0.5); cursor: pointer; color:white; border-radius:6px; border:1px solid #475569">
+                            <option value="Pendente" ${pendingSelected}>Aguardando Tratativa (Pendente)</option>
+                            <option value="Em análise" ${analiseSelected}>Verificando com Setores (Em análise)</option>
+                            <option value="Concluída" ${concluidaSelected}>Finalizar e Dar Baixa (Concluída)</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="updateStatus('${r.id}')">Efetivar Modificação de Protocolo</button>
+                    </div>
                 </div>
             </div>
         `;
@@ -108,17 +132,4 @@ async function loadAllRequests() {
  * @param {string} reqId String com identificação Hexadecimal da solicitação.
  * @param {string} newStatus Valores explícitos validados da DB constraint enum type.
  */
-async function updateStatus(reqId, newStatus) {
-    const { error } = await supabase
-        .from('requests')
-        .update({ status: newStatus })
-        .eq('id', reqId);
-        
-    // Estratégia "Rollback Guiado" -> Notifica pane e repuxa valores estáticos pra destruir as falsas visões da UI.
-    if (error) {
-        alert("Falha de rede ao alterar a Cloud Data: " + error.message);
-        loadAllRequests(); 
-    }
-}
-
 document.addEventListener('DOMContentLoaded', init);
