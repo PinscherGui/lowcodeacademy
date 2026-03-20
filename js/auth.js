@@ -33,7 +33,10 @@ async function redirectUser(userId) {
         .single();
 
     if (error || !profile) {
-        showAlert("Erro no sistema. Houve falha ao procurar escopo de credenciais.", "error");
+        // Como o perfil falhou na criação, precisamos destruir essa "sessão-fantasma"
+        // para que a pessoa possa criar outra conta ou logar com uma conta válida.
+        await supabase.auth.signOut();
+        showAlert("Erro: Seu perfil não foi cadastrado no banco de dados. Sessão redefinida. Crie uma nova conta usando outro email.", "error");
         return;
     }
 
@@ -115,7 +118,7 @@ registerForm.addEventListener('submit', async (e) => {
         
         // 2. Transfere a Primary Key referenciável junto aos perfis e o "Caminho Administrativo / Cargo" selecionado.
         const { error: profileError } = await supabase.from('profiles').insert([
-            { id: authUser.id, name: name, role: role, email: email }
+            { id: authUser.id, name: name, role: role } // Removido o insert de email, que não existe na sua tabela SQL.
         ]);
 
         if (profileError) {
